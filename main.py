@@ -4,7 +4,7 @@ pygame.init()
  
 WIDTH, HEIGHT = 900, 900
  
-SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT), flags=pygame.SCALED)
 pygame.display.set_caption("Tic Tac Toe!")
  
 BOARD = pygame.image.load("assets/Board.png")
