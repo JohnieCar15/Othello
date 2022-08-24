@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+
 import pygame, sys
+import math
  
 pygame.init()
  
@@ -25,8 +28,11 @@ SCREEN.blit(pygame.transform.scale(BOARD, (WIDTH, HEIGHT)), (0, 0))
  
 pygame.display.update()
 
-def adjust_mouse_pos():
-    print(pygame.mouse.get_pos())
+def adjust_mouse_pos(size):
+    coordinates = pygame.mouse.get_pos()
+    x_pos = math.floor(coordinates[0] / (size[0] / 3))
+    y_pos = math.floor(coordinates[1] / (size[1] / 3))
+    print(x_pos, y_pos)
 
 while True:
     for event in pygame.event.get():
@@ -39,4 +45,5 @@ while True:
             SCREEN.blit(pygame.transform.scale(BOARD, event.size), (0, 0))
             pygame.display.update()
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            print(pygame.mouse.get_pos())
+            adjust_mouse_pos(pygame.display.get_surface().get_size())
+            
