@@ -10,9 +10,9 @@ WIDTH, HEIGHT = 900, 900
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT), flags=pygame.RESIZABLE|pygame.DOUBLEBUF|pygame.HWSURFACE)
 pygame.display.set_caption("Tic Tac Toe!")
  
-BOARD = pygame.image.load("assets/Board.png")
-X_IMG = pygame.image.load("assets/X.png")
-O_IMG = pygame.image.load("assets/O.png")
+BOARD = pygame.image.load("tictactoeassets/Board.png")
+X_IMG = pygame.image.load("tictactoeassets/X.png")
+O_IMG = pygame.image.load("tictactoeassets/O.png")
  
 BG_COLOR = (214, 201, 227)
  
