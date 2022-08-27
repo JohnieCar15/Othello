@@ -28,40 +28,42 @@ SCREEN.blit(pygame.transform.scale(BOARD, (WIDTH, HEIGHT)), (0, 0))
  
 pygame.display.update()
 
-def render_board(size, board, ximg, oimg):
+def render_board(size, ximg, oimg):
+    global board
     global graphical_board
     for i in range(3):
         for j in range(3):
             if board[i][j] == 'X':
                 graphical_board[i][j][0] = ximg
-                graphical_board[i][j][1] = ximg.get_rect(center=(j*(size[1] / 3)+(size[1] / 6), i*(size[0] / 3)+(size[0] / 6)))
+                graphical_board[i][j][1] = ximg.get_rect(center=(j*(size[0] / 3)+(size[0] / 6), i*(size[1] / 3)+(size[1] / 6)))
             elif board[i][j] == 'O':
                 graphical_board[i][j][0] = oimg
-                graphical_board[i][j][1] = oimg.get_rect(center=(j*(size[1] / 3)+(size[1] / 6), i*(size[0] / 3)+(size[0] / 6)))
+                graphical_board[i][j][1] = oimg.get_rect(center=(j*(size[0] / 3)+(size[0] / 6), i*(size[1] / 3)+(size[1] / 6)))
 
 
+def show_board():
+    global graphical_board
+    for i in range(3):
+        for j in range(3):
+            if graphical_board[i][j][0] is not None:
+                SCREEN.blit(graphical_board[i][j][0], graphical_board[i][j][1])
 
 
-def adjust_mouse_pos(size, board, graphical_board, to_move):
+def adjust_mouse_pos(size, to_move):
+    global board
+    global graphical_board
     coordinates = pygame.mouse.get_pos()
     x_pos = math.floor(coordinates[0] / (size[0] / 3))
     y_pos = math.floor(coordinates[1] / (size[1] / 3))
     if board[y_pos][x_pos] != "O" and board[y_pos][x_pos] != "X":
         board[y_pos][x_pos] = to_move
-        if to_move == "X":
-            to_move = "O" 
-        else: 
-            to_move = "X"
+        to_move = "O" if to_move == "X" else "X"
 
 
-    render_board(size, board, X_IMG, O_IMG)
-
-    for i in range(3):
-        for j in range(3):
-            if graphical_board[i][j][0] is not None:
-                SCREEN.blit(graphical_board[i][j][0], graphical_board[i][j][1])
+    render_board(size, X_IMG, O_IMG)
+    show_board()
     
-    return board, to_move
+    return to_move
 
 while True:
     for event in pygame.event.get():
@@ -72,14 +74,10 @@ while True:
             SCREEN = pygame.display.set_mode(event.size, flags=pygame.RESIZABLE|pygame.DOUBLEBUF|pygame.HWSURFACE)
             SCREEN.fill(BG_COLOR)
             SCREEN.blit(pygame.transform.scale(BOARD, event.size), (0, 0))
-            render_board(pygame.display.get_surface().get_size(), board, X_IMG, O_IMG)
-            print(graphical_board)
-            for i in range(3):
-                for j in range(3):
-                    if graphical_board[i][j][0] is not None:
-                        SCREEN.blit(graphical_board[i][j][0], graphical_board[i][j][1])
-            pygame.display.update()
+            render_board(pygame.display.get_surface().get_size(), X_IMG, O_IMG)
+            show_board()
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            board, to_move = adjust_mouse_pos(pygame.display.get_surface().get_size(), board, graphical_board, to_move)
-            pygame.display.update()
+            to_move = adjust_mouse_pos(pygame.display.get_surface().get_size(), to_move)
+    
+        pygame.display.update()
             
