@@ -20,6 +20,10 @@ def drawGrid():
             rect = pygame.Rect(x, y, WIDTH / 8, HEIGHT / 8)
             pygame.draw.rect(SCREEN, WHITE, rect, 5)
 
+    for x in range(WIDTH // 16, WIDTH - WIDTH // 16, WIDTH // 8):
+        for y in range(HEIGHT // 16, HEIGHT - HEIGHT // 16, HEIGHT // 8):
+            pygame.draw.circle(SCREEN, (200,0,0), (x,y), 30)   
+
 while True:
     drawGrid()
     for event in pygame.event.get():
