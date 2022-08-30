@@ -2,6 +2,8 @@
 
 import pygame, sys
 import math
+
+from othelloai import get_possible_moves, get_score, alphabeta
  
 pygame.init()
 
@@ -250,6 +252,7 @@ while True:
             pygame.quit()
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            alphabeta(board)
             to_move = adjust_board(to_move)
 
     pygame.display.update()
