@@ -252,7 +252,7 @@ while True:
             pygame.quit()
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            alphabeta(board)
+            # print(alphabeta(board, 2, -math.inf, math.inf, "B"))
             to_move = adjust_board(to_move)
 
     pygame.display.update()

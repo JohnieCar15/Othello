@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import math
+import copy
 
 heuristic = [
 [1000, -10, 10, 10, 10, 10, -10, 1000],
@@ -13,8 +14,31 @@ heuristic = [
 [1000, -10, 10, 10, 10, 10, -10, 1000]
 ]
 
-def alphabeta(board):
-    board[6][1] = "B"
+def alphabeta(board, depth, alpha, beta, maximisingplayer):
+    newboard = copy.deepcopy(board)
+    if depth == 0 or len(get_possible_moves(newboard, maximisingplayer)) == 0:
+        return [get_score(newboard)[maximisingplayer], []]
+    
+    if maximisingplayer == "B":
+        value = [-math.inf, []]
+        for move in get_possible_moves(newboard, maximisingplayer):
+            newboard[move[0]][move[1]] = maximisingplayer
+            value = value if value[0] > alphabeta(newboard, depth - 1, alpha, beta, "W")[0] else alphabeta(newboard, depth - 1, alpha, beta, "W")
+            if value[0] >= beta:
+                value[1].append(move)
+                break
+            alpha = max(alpha, value[0])
+        return value
+    else:
+        value = [math.inf, (-1, -1)]
+        for move in get_possible_moves(newboard, maximisingplayer):
+            newboard[move[0]][move[1]] = maximisingplayer
+            value = value if value[0] < alphabeta(newboard, depth - 1, alpha, beta, "B")[0] else alphabeta(newboard, depth - 1, alpha, beta, "B")
+            if value[0] <= alpha:
+                value[1].append(move) 
+                break
+            beta = min(beta, value[0])
+        return value
 
 def get_possible_moves(board, to_move):
     moves= []
@@ -180,14 +204,14 @@ def get_possible_moves(board, to_move):
     return moves
 
 def get_score(board):
-    dictscores = {'Black': 0, 'White': 0, 'Neither': 0}
+    dictscores = {'B': 0, 'W': 0, 'N': 0}
     for x in range(0, 8):
         for y in range(0, 8):
             if board[x][y] == "W":
-                dictscores['White'] += 1
+                dictscores['W'] += 1
             elif board[x][y] == "B":
-                dictscores['Black'] += 1
+                dictscores['B'] += 1
             else:
-                dictscores['Neither'] += 1
+                dictscores['N'] += 1
     
     return dictscores
