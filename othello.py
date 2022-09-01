@@ -253,14 +253,13 @@ while True:
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if to_move == "B":
-                coordinates = alphabeta(board, 3, -math.inf, math.inf, True)[0]
-                flip_pieces(coordinates[1], coordinates[0], to_move)
-                board[coordinates[1]][coordinates[0]] = "B"
+                coordinates = alphabeta(board, 5, -math.inf, math.inf, True)[0]
+                flip_pieces(coordinates[0], coordinates[1], to_move)
+                board[coordinates[0]][coordinates[1]] = "B"
                 render_board()
                 to_move = "W"
             else:
-                adjust_board("W")
-                render_board()
-                to_move = "B"
+                to_move = adjust_board(to_move)
+            
 
     pygame.display.update()

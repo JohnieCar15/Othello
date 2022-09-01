@@ -4,14 +4,14 @@ import math
 import copy
 
 heuristic = [
-[1000, -10, 10, 10, 10, 10, -10, 1000],
-[-10, -10, 1, 1, 1, 1, -10, -10],
-[10, 1, 1, 1, 1, 1, 1, 10],
-[10, 1, 1, 1, 1, 1, 1, 10],
-[10, 1, 1, 1, 1, 1, 1, 10],
-[10, 1, 1, 1, 1, 1, 1, 10],
-[-10, -10, 1, 1, 1, 1, -10, -10],
-[1000, -10, 10, 10, 10, 10, -10, 1000]
+[100, -10, 11, 6, 6, 11, -10, 100],
+[-10, -20, 1, 2, 2, 1, -20, -10],
+[10, 1, 5, 4, 4, 5, 1, 10],
+[6, 2, 4, 2, 2, 4, 2, 6],
+[6, 2, 4, 2, 2, 4, 2, 6],
+[10, 1, 5, 4, 4, 5, 1, 10],
+[-10, -20, 1, 2, 2, 1, -20, -10],
+[100, -10, 11, 6, 6, 11, -10, 100]
 ]
 
 moves = []
@@ -25,7 +25,7 @@ def alphabeta(board, depth, alpha, beta, maximisingplayer):
         value = -math.inf
         for move in get_possible_moves(board, "B"):
             newboard = copy.deepcopy(board)
-            newboard[move[0]][move[1]] = "B"
+            newboard[move[1]][move[0]] = "B"
             new_score = alphabeta(newboard, depth - 1, alpha, beta, False)[1]
             if new_score > value:
                 value = new_score
@@ -39,7 +39,7 @@ def alphabeta(board, depth, alpha, beta, maximisingplayer):
         value = math.inf
         for move in get_possible_moves(board, "W"):
             newboard = copy.deepcopy(board)
-            newboard[move[0]][move[1]] = "W"
+            newboard[move[1]][move[0]] = "W"
             new_score = alphabeta(newboard, depth - 1, alpha, beta, True)[1]
             if new_score < value:
                 value = new_score
@@ -82,14 +82,17 @@ def get_modified_score(board):
     return dictscores
 def get_possible_moves(board, to_move):
     moves= []
-    for x in range(0, 8):
-        for y in range(0, 8):
+    for y in range(0, 8):
+        for x in range(0, 8):
             up = y - 1
             down = y + 1
             left = x - 1
             right = x + 1
 
             can_flip = False
+
+            if board[y][x] != None:
+                continue
 
             # Vertically upwards direction
             while up != -1:
