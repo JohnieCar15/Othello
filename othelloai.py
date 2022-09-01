@@ -14,32 +14,72 @@ heuristic = [
 [1000, -10, 10, 10, 10, 10, -10, 1000]
 ]
 
-def alphabeta(board, depth, alpha, beta, maximisingplayer):
-    newboard = copy.deepcopy(board)
-    if depth == 0 or len(get_possible_moves(newboard, maximisingplayer)) == 0:
-        return [get_score(newboard)[maximisingplayer], []]
-    
-    if maximisingplayer == "B":
-        value = [-math.inf, []]
-        for move in get_possible_moves(newboard, maximisingplayer):
-            newboard[move[0]][move[1]] = maximisingplayer
-            value = value if value[0] > alphabeta(newboard, depth - 1, alpha, beta, "W")[0] else alphabeta(newboard, depth - 1, alpha, beta, "W")
-            if value[0] >= beta:
-                value[1].append(move)
-                break
-            alpha = max(alpha, value[0])
-        return value
-    else:
-        value = [math.inf, (-1, -1)]
-        for move in get_possible_moves(newboard, maximisingplayer):
-            newboard[move[0]][move[1]] = maximisingplayer
-            value = value if value[0] < alphabeta(newboard, depth - 1, alpha, beta, "B")[0] else alphabeta(newboard, depth - 1, alpha, beta, "B")
-            if value[0] <= alpha:
-                value[1].append(move) 
-                break
-            beta = min(beta, value[0])
-        return value
+moves = []
 
+def alphabeta(board, depth, alpha, beta, maximisingplayer):
+    global moves
+    if depth == 0 or len(get_possible_moves(board, "B")) == 0:
+        return (-1, -1), get_modified_score(board)["B"]
+    
+    if maximisingplayer:
+        value = -math.inf
+        for move in get_possible_moves(board, "B"):
+            newboard = copy.deepcopy(board)
+            newboard[move[0]][move[1]] = "B"
+            new_score = alphabeta(newboard, depth - 1, alpha, beta, False)[1]
+            if new_score > value:
+                value = new_score
+                best_move = move
+
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
+        return best_move, value
+    else:
+        value = math.inf
+        for move in get_possible_moves(board, "W"):
+            newboard = copy.deepcopy(board)
+            newboard[move[0]][move[1]] = "W"
+            new_score = alphabeta(newboard, depth - 1, alpha, beta, True)[1]
+            if new_score < value:
+                value = new_score
+                best_move = move
+            beta = min(beta, value)
+            if beta <= alpha:
+                break
+        return best_move, value
+
+def print_moves():
+    global moves
+    print(moves)
+
+
+def get_score(board):
+    dictscores = {'B': 0, 'W': 0, 'N': 0}
+    for x in range(0, 8):
+        for y in range(0, 8):
+            if board[x][y] == "W":
+                dictscores['W'] += 1
+            elif board[x][y] == "B":
+                dictscores['B'] += 1
+            else:
+                dictscores['N'] += 1
+    
+    return dictscores
+
+def get_modified_score(board):
+    global heuristic
+    dictscores = {'B': 0, 'W': 0, 'N': 0}
+    for x in range(0, 8):
+        for y in range(0, 8):
+            if board[x][y] == "W":
+                dictscores['W'] += heuristic[x][y]
+            elif board[x][y] == "B":
+                dictscores['B'] += heuristic[x][y]
+            else:
+                dictscores['N'] += heuristic[x][y]
+    
+    return dictscores
 def get_possible_moves(board, to_move):
     moves= []
     for x in range(0, 8):
@@ -203,15 +243,3 @@ def get_possible_moves(board, to_move):
     
     return moves
 
-def get_score(board):
-    dictscores = {'B': 0, 'W': 0, 'N': 0}
-    for x in range(0, 8):
-        for y in range(0, 8):
-            if board[x][y] == "W":
-                dictscores['W'] += 1
-            elif board[x][y] == "B":
-                dictscores['B'] += 1
-            else:
-                dictscores['N'] += 1
-    
-    return dictscores

@@ -3,7 +3,7 @@
 import pygame, sys
 import math
 
-from othelloai import get_possible_moves, get_score, alphabeta
+from othelloai import get_modified_score, get_possible_moves, print_moves, alphabeta
  
 pygame.init()
 
@@ -252,7 +252,15 @@ while True:
             pygame.quit()
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            # print(alphabeta(board, 2, -math.inf, math.inf, "B"))
-            to_move = adjust_board(to_move)
+            if to_move == "B":
+                coordinates = alphabeta(board, 3, -math.inf, math.inf, True)[0]
+                flip_pieces(coordinates[1], coordinates[0], to_move)
+                board[coordinates[1]][coordinates[0]] = "B"
+                render_board()
+                to_move = "W"
+            else:
+                adjust_board("W")
+                render_board()
+                to_move = "B"
 
     pygame.display.update()
