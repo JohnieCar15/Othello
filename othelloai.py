@@ -32,7 +32,7 @@ def alphabeta(board, depth, alpha, beta, maximisingplayer):
                 best_move = move
 
             alpha = max(alpha, value)
-            if alpha >= beta:
+            if value >= beta:
                 break
         return best_move, value
     else:
@@ -45,7 +45,7 @@ def alphabeta(board, depth, alpha, beta, maximisingplayer):
                 value = new_score
                 best_move = move
             beta = min(beta, value)
-            if beta <= alpha:
+            if value <= alpha:
                 break
         return best_move, value
 
@@ -80,6 +80,7 @@ def get_modified_score(board):
                 dictscores['N'] += heuristic[x][y]
     
     return dictscores
+
 def get_possible_moves(board, to_move):
     moves= []
     for y in range(0, 8):
