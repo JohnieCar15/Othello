@@ -2,6 +2,9 @@
 
 import math
 import copy
+import random
+import numpy as np
+from collections import defaultdict
 
 heuristic = [
 [100, -10, 11, 6, 6, 11, -10, 100],
@@ -14,16 +17,15 @@ heuristic = [
 [100, -10, 11, 6, 6, 11, -10, 100]
 ]
 
-moves = []
-
 def alphabeta(board, depth, alpha, beta, maximisingplayer):
-    global moves
     if depth == 0 or len(get_possible_moves(board, "B")) == 0:
         return (-1, -1), get_modified_score(board)["B"]
     
     if maximisingplayer:
         value = -math.inf
-        for move in get_possible_moves(board, "B"):
+        moves = get_possible_moves(board, "B")
+        best_move = random.choice(moves)
+        for move in moves:
             newboard = copy.deepcopy(board)
             newboard[move[1]][move[0]] = "B"
             new_score = alphabeta(newboard, depth - 1, alpha, beta, False)[1]
@@ -37,7 +39,9 @@ def alphabeta(board, depth, alpha, beta, maximisingplayer):
         return best_move, value
     else:
         value = math.inf
-        for move in get_possible_moves(board, "W"):
+        moves = get_possible_moves(board, "W")
+        best_move = random.choice(moves)
+        for move in moves:
             newboard = copy.deepcopy(board)
             newboard[move[1]][move[0]] = "W"
             new_score = alphabeta(newboard, depth - 1, alpha, beta, True)[1]
@@ -49,9 +53,97 @@ def alphabeta(board, depth, alpha, beta, maximisingplayer):
                 break
         return best_move, value
 
-def print_moves():
-    global moves
-    print(moves)
+
+class MonteCarloTreeSearchNode():
+    def __init__(self, state, parent=None, parent_action=None):
+        self.state = state
+        self.parent = parent
+        self.parent_action = parent_action
+        self.children = []
+        self._number_of_visits = 0
+        self._results = defaultdict(int)
+        self._results[1] = 0
+        self._results[-1] = 0
+        self._untried_actions = None
+        self._untried_actions = self.untried_actions()
+        return
+    
+    def untried_actions(self):
+        self._untried_actions = self.state.get_legal_actions()
+        return self._untried_actions
+    
+    def q(self):
+        wins = self._results[1]
+        loses = self._results[-1]
+        return wins - loses
+
+    def n(self):
+        return self._number_of_visits
+
+    def expand(self):
+        
+        action = self._untried_actions.pop()
+        next_state = self.state.move(action)
+        child_node = MonteCarloTreeSearchNode(
+            next_state, parent=self, parent_action=action)
+
+        self.children.append(child_node)
+        return child_node 
+
+    def is_terminal_node(self):
+        return self.state.is_game_over()
+
+    def rollout(self):
+        current_rollout_state = self.state
+        
+        while not current_rollout_state.is_game_over():
+            
+            possible_moves = current_rollout_state.get_legal_actions()
+            
+            action = self.rollout_policy(possible_moves)
+            current_rollout_state = current_rollout_state.move(action)
+        return current_rollout_state.game_result()
+
+    def backpropagate(self, result):
+        self._number_of_visits += 1.
+        self._results[result] += 1.
+        if self.parent:
+            self.parent.backpropagate(result)
+
+    def is_fully_expanded(self):
+        return len(self._untried_actions) == 0
+
+    def best_child(self, c_param=0.1):
+        
+        choices_weights = [(c.q() / c.n()) + c_param * np.sqrt((2 * np.log(self.n()) / c.n())) for c in self.children]
+        return self.children[np.argmax(choices_weights)]
+
+    def rollout_policy(self, possible_moves):
+    
+        return possible_moves[np.random.randint(len(possible_moves))]
+
+    def _tree_policy(self):
+
+        current_node = self
+        while not current_node.is_terminal_node():
+            
+            if not current_node.is_fully_expanded():
+                return current_node.expand()
+            else:
+                current_node = current_node.best_child()
+        return current_node
+
+    def best_action(self):
+        simulation_no = 100
+        
+        
+        for i in range(simulation_no):
+            
+            v = self._tree_policy()
+            reward = v.rollout()
+            v.backpropagate(reward)
+        
+        return self.best_child(c_param=0.)
 
 
 def get_score(board):

@@ -3,7 +3,7 @@
 import pygame, sys
 import math
 
-from othelloai import get_modified_score, get_possible_moves, print_moves, alphabeta
+from othelloai import get_modified_score, get_possible_moves, alphabeta
  
 pygame.init()
 
