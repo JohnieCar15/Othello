@@ -3,7 +3,7 @@
 import pygame, sys
 import math
 
-from othelloai import get_modified_score, get_possible_moves, alphabeta
+from othelloai import get_score, get_possible_moves, alphabeta, is_finished
  
 pygame.init()
 
@@ -226,6 +226,13 @@ def adjust_board(to_move):
     x_pos = math.floor(coordinates[0] / (WIDTH / 8))
     y_pos = math.floor(coordinates[1] / (HEIGHT / 8))
 
+    # Considers case where player is unable to make move but opponent has remaining moves
+    other_player = "W" if to_move == "B" else "B"
+    if len(get_possible_moves(board, to_move)) == 0:
+        if len(get_possible_moves(board, other_player)) != 0:
+            to_move = other_player 
+            return
+
     if board[y_pos][x_pos] == None:
         if not flip_pieces(y_pos, x_pos, to_move):
             return to_move
@@ -260,6 +267,11 @@ while True:
                 to_move = "W"
             else:
                 to_move = adjust_board(to_move)
+            
+            if is_finished(board):
+                print("Game finished!")
+                print(get_score(board))
+                sys.exit()
             
 
     pygame.display.update()

@@ -135,8 +135,6 @@ class MonteCarloTreeSearchNode():
 
     def best_action(self):
         simulation_no = 100
-        
-        
         for i in range(simulation_no):
             
             v = self._tree_policy()
@@ -145,6 +143,20 @@ class MonteCarloTreeSearchNode():
         
         return self.best_child(c_param=0.)
 
+    def get_legal_actions(self): 
+        '''
+        Modify according to your game or
+        needs. Constructs a list of all
+        possible actions from current state.
+        Returns a list.
+        '''
+        return get_possible_moves(self.state)
+
+def is_finished(board):
+    if len(get_possible_moves(board, "B")) == 0 and len(get_possible_moves(board, "W")) == 0:
+        return True
+
+    return False
 
 def get_score(board):
     dictscores = {'B': 0, 'W': 0, 'N': 0}
