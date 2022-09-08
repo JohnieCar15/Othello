@@ -24,7 +24,10 @@ def alphabeta(board, depth, alpha, beta, maximisingplayer):
     if maximisingplayer:
         value = -math.inf
         moves = get_possible_moves(board, "B")
-        best_move = random.choice(moves)
+        if len(moves) != 0:
+            best_move = random.choice(moves)
+        else:
+            return
         for move in moves:
             newboard = copy.deepcopy(board)
             newboard[move[1]][move[0]] = "B"
@@ -40,7 +43,10 @@ def alphabeta(board, depth, alpha, beta, maximisingplayer):
     else:
         value = math.inf
         moves = get_possible_moves(board, "W")
-        best_move = random.choice(moves)
+        if len(moves) != 0:
+            best_move = random.choice(moves)
+        else:
+            return
         for move in moves:
             newboard = copy.deepcopy(board)
             newboard[move[1]][move[0]] = "W"
