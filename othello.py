@@ -76,11 +76,12 @@ while True:
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if to_move == "B":
-                coordinates = alphabeta(board, 5, -math.inf, math.inf, True)[0]
-                flip_pieces(coordinates[0], coordinates[1], to_move, board)
-                board[coordinates[0]][coordinates[1]] = "B"
-                # root = MonteCarloTreeSearchNode(state = board)
-                # selected_node = root.best_action()
+                # coordinates = alphabeta(board, 5, -math.inf, math.inf, True)[0]
+                # flip_pieces(coordinates[0], coordinates[1], to_move, board)
+                # board[coordinates[0]][coordinates[1]] = "B"
+                root = MonteCarloTreeSearchNode(state = board)
+                selected_node = root.best_action()
+                print(selected_node)
                 render_board()
                 to_move = "W"
             else:
